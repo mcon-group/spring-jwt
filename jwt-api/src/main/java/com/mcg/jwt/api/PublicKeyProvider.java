@@ -8,4 +8,6 @@ public interface PublicKeyProvider {
 
 	public List<PublicKey> getKeys() throws NoSuchAlgorithmException;
 	
+	public PublicKey getKey(long serial) throws NoSuchAlgorithmException;
+	
 }

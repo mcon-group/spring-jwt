@@ -4,8 +4,10 @@ import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.mcg.jwt.api.PrivateKeyProvider;
 import com.mcg.jwt.api.PublicKeyProvider;
@@ -13,28 +15,39 @@ import com.mcg.jwt.api.PublicKeyProvider;
 public class DefaultKeyProvider implements PrivateKeyProvider, PublicKeyProvider {
 
 	private DefaultKeyGenerator kg = new DefaultKeyGenerator();
-	private KeyPair kp;
+	private Map<Long,KeyPair> keyPairs = new HashMap<Long, KeyPair>();
+	private long currentSerial = 0; 
 	private String algorithm;
 	
-	private void getKeyPair() throws NoSuchAlgorithmException {
-		if(kp==null) {
-			kg.setAlgorithm(algorithm);
-			try {
-				kp = kg.generateKeyPair();
-			} catch (NoSuchAlgorithmException e) {
-				throw new NoSuchAlgorithmException();
-			}
+	public void createKeyPair(long serial) throws NoSuchAlgorithmException {
+		if(serial < currentSerial) {
+			throw new RuntimeException("serials should not go down");
+		}
+		kg.setAlgorithm(algorithm);
+		try {
+			KeyPair kp = kg.generateKeyPair();
+			keyPairs.put(serial, kp);
+			this.currentSerial = serial;
+		} catch (NoSuchAlgorithmException e) {
+			throw new NoSuchAlgorithmException();
 		}
 	}
 	
+	
+	private KeyPair getKeyPair(long serial) throws NoSuchAlgorithmException {
+		return keyPairs.get(serial);
+	}
+	
 	public List<PublicKey> getKeys() throws NoSuchAlgorithmException {
-		getKeyPair();
-		return Collections.singletonList(kp.getPublic());
+		List<PublicKey> out = new ArrayList<PublicKey>();
+		for(KeyPair kp : keyPairs.values()) {
+			out.add(kp.getPublic());
+		}
+		return out;
 	}
 
-	public PrivateKey getPrivateKey() throws NoSuchAlgorithmException {
-		getKeyPair();
-		return kp.getPrivate();
+	public PrivateKey getPrivateKey(long serial) throws NoSuchAlgorithmException {
+		return getKeyPair(serial).getPrivate();
 	}
 
 	public String getAlgorithm() {
@@ -43,6 +56,14 @@ public class DefaultKeyProvider implements PrivateKeyProvider, PublicKeyProvider
 
 	public void setAlgorithm(String algorithm) {
 		this.algorithm = algorithm;
+	}
+
+	public PublicKey getKey(long serial) throws NoSuchAlgorithmException {
+		return getKeyPair(serial).getPublic();
+	}
+
+	public long getCurrentSerial() {
+		return currentSerial;
 	}
 	
 	
