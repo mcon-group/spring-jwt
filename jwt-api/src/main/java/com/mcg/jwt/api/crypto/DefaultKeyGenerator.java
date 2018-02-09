@@ -14,11 +14,11 @@ import com.mcg.jwt.api.KeyGenerator;
 public class DefaultKeyGenerator implements KeyGenerator {
 
 	@Value("${jwt.algo:'RSA'}")
-	private String algorhithm = "RSA";
+	private String algorithm = "RSA";
 	
 	public KeyPair generateKeyPair() throws NoSuchAlgorithmException {
-		if(algorhithm.equals("RSA")) return generateRsaKeyPair();
-		if(algorhithm.equals("EC")) return generateEcKeyPair();
+		if(algorithm.equals("RSA")) return generateRsaKeyPair();
+		if(algorithm.equals("EC")) return generateEcKeyPair();
 		throw new NoSuchAlgorithmException();
 	}
 	
@@ -42,12 +42,12 @@ public class DefaultKeyGenerator implements KeyGenerator {
 		}
 	}
 
-	public String getAlgorhithm() {
-		return algorhithm;
+	public String getAlgorithm() {
+		return algorithm;
 	}
 
-	public void setAlgorhithm(String algorhithm) {
-		this.algorhithm = algorhithm;
+	public void setAlgorithm(String algorithm) {
+		this.algorithm = algorithm;
 	}
 	
 }

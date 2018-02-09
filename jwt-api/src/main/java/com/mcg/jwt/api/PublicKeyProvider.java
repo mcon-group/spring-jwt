@@ -7,7 +7,5 @@ import java.util.List;
 public interface PublicKeyProvider {
 
 	public List<PublicKey> getKeys() throws NoSuchAlgorithmException;
-
-	public String getAlgorhithm();
 	
 }

@@ -7,6 +7,6 @@ public interface PrivateKeyProvider {
 
 	public PrivateKey getPrivateKey() throws NoSuchAlgorithmException;
 	
-	public String getAlgorhithm();
+	public String getAlgorithm();
 
 }

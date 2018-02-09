@@ -18,7 +18,7 @@ public class DefaultKeyProvider implements PrivateKeyProvider, PublicKeyProvider
 	
 	private void getKeyPair() throws NoSuchAlgorithmException {
 		if(kp==null) {
-			kg.setAlgorhithm(algorithm);
+			kg.setAlgorithm(algorithm);
 			try {
 				kp = kg.generateKeyPair();
 			} catch (NoSuchAlgorithmException e) {
@@ -37,7 +37,7 @@ public class DefaultKeyProvider implements PrivateKeyProvider, PublicKeyProvider
 		return kp.getPrivate();
 	}
 
-	public String getAlgorhithm() {
+	public String getAlgorithm() {
 		return algorithm;
 	}
 
