@@ -4,14 +4,14 @@
 	<parent>
 		<groupId>com.mcg.jwt</groupId>
 		<artifactId>jwt</artifactId>
-		<version>0.0.6-SNAPSHOT</version>
+		<version>0.0.6</version>
 	</parent>
 	<artifactId>jwt-server</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>com.mcg.jwt</groupId>
 			<artifactId>jwt-client</artifactId>
-			<version>0.0.6-SNAPSHOT</version>
+			<version>0.0.6</version>
 		</dependency>
 	</dependencies>
 </project>
