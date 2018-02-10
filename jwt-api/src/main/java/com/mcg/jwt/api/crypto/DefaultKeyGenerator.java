@@ -16,6 +16,13 @@ public class DefaultKeyGenerator implements KeyGenerator {
 	@Value("${jwt.algo:'RSA'}")
 	private String algorithm = "RSA";
 	
+	public DefaultKeyGenerator() {
+	}
+
+	public DefaultKeyGenerator(String algorithm) {
+		this.algorithm = algorithm;
+	}
+	
 	public KeyPair generateKeyPair() throws NoSuchAlgorithmException {
 		if(algorithm.equals("RSA")) return generateRsaKeyPair();
 		if(algorithm.equals("EC")) return generateEcKeyPair();
@@ -35,7 +42,7 @@ public class DefaultKeyGenerator implements KeyGenerator {
 	public KeyPair generateEcKeyPair() {
 		try {
 			KeyPairGenerator kpg = KeyPairGenerator.getInstance("EC");
-		    kpg.initialize(new ECGenParameterSpec("secp192k1"));
+		    kpg.initialize(new ECGenParameterSpec("secp224r1"));
 			return kpg.generateKeyPair();
 		} catch (Exception e) {
 			throw new RuntimeException(e); 
