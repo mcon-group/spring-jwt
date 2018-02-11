@@ -21,6 +21,16 @@ public abstract class TokenReader<T> {
 	@Autowired
 	private PublicKeyProvider publicKeyProvider;
 	
+	public String getString(Map<String,Object> claims, String claimName, String def) {
+		if(claims.get(claimName)==null) return def;
+		return claims.get(claimName).toString();
+	}
+	
+	public boolean getBoolean(Map<String,Object> claims, String claimName, boolean def) {
+		if(claims.get(claimName)==null) return def;
+		return (boolean)claims.get(claimName);
+	}
+	
 	public T readToken(String in) throws TokenException, NoSuchAlgorithmException {
 		if(in == null || in.trim().length()==0) return null;
 		try {
