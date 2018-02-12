@@ -5,6 +5,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import com.mcg.jwt.api.exception.TokenException;
 import com.mcg.jwt.api.exception.TokenExpiredException;
@@ -16,10 +18,13 @@ import io.jsonwebtoken.JwsHeader;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SigningKeyResolver;
 
+@EnableScheduling
 public abstract class TokenReader<T> {
 
 	@Autowired
 	private PublicKeyProvider publicKeyProvider;
+	
+	private Resolver resolver = new Resolver();
 	
 	public String getString(Map<String,Object> claims, String claimName, String def) {
 		if(claims.get(claimName)==null) return def;
@@ -28,13 +33,13 @@ public abstract class TokenReader<T> {
 	
 	public boolean getBoolean(Map<String,Object> claims, String claimName, boolean def) {
 		if(claims.get(claimName)==null) return def;
-		return (boolean)claims.get(claimName);
+		return ((Boolean)claims.get(claimName)).booleanValue();
 	}
 	
 	public T readToken(String in) throws TokenException, NoSuchAlgorithmException {
 		if(in == null || in.trim().length()==0) return null;
 		try {
-			return unmap(Jwts.parser().setSigningKeyResolver(new Resolver()).parseClaimsJws(in).getBody()); 
+			return unmap(Jwts.parser().setSigningKeyResolver(resolver).parseClaimsJws(in).getBody()); 
 		} catch (ExpiredJwtException e1) {
 			throw new TokenExpiredException();
 		} catch (Exception e) {
@@ -53,19 +58,28 @@ public abstract class TokenReader<T> {
 	}
 	
 	
+	@Scheduled(fixedDelay=1000*60*60*24)
+	public void flushKeys() {
+		resolver.keys.clear();
+	}
+	
 	private class Resolver implements SigningKeyResolver {
+		
+		private Map<String,Key> keys;
 
 		public Key resolveSigningKey(JwsHeader header, Claims claims) {
-			try {
-				return publicKeyProvider.getKey(Long.parseLong(header.get("serial")+""));
-			} catch (NoSuchAlgorithmException e) {
-				throw new RuntimeException("could not find key to verify signature!");
-			}
+			return (resolveSigningKey(header, ""));
 		}
 
 		public Key resolveSigningKey(JwsHeader header, String plaintext) {
 			try {
-				return publicKeyProvider.getKey(Long.parseLong(header.get("serial")+""));
+				Long s = Long.parseLong(header.get("serial")+"");
+				Key k = keys.get(s);
+				if(k==null) {
+					k = publicKeyProvider.getKey(s);
+					keys.put(s.toString(), k);
+				}
+				return k;
 			} catch (NoSuchAlgorithmException e) {
 				throw new RuntimeException("could not find key to verify signature!");
 			}
