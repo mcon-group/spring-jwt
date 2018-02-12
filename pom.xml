@@ -3,13 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.mcg.jwt</groupId>
 	<artifactId>jwt</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.12-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
-		<module>jwt-common</module>
 		<module>jwt-api</module>
-		<module>jwt-client</module>
-		<module>jwt-server</module>
 	</modules>
 	<dependencies>
 		<dependency>
