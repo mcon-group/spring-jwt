@@ -2,6 +2,7 @@ package com.mcg.jwt.api;
 
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +66,7 @@ public abstract class TokenReader<T> {
 	
 	private class Resolver implements SigningKeyResolver {
 		
-		private Map<String,Key> keys;
+		private Map<String,Key> keys = new HashMap<String, Key>();
 
 		public Key resolveSigningKey(JwsHeader header, Claims claims) {
 			return (resolveSigningKey(header, ""));
@@ -80,7 +81,8 @@ public abstract class TokenReader<T> {
 					keys.put(s.toString(), k);
 				}
 				return k;
-			} catch (NoSuchAlgorithmException e) {
+			} catch (Exception e) {
+				e.printStackTrace();
 				throw new RuntimeException("could not find key to verify signature!");
 			}
 		}
