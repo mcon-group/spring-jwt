@@ -42,7 +42,7 @@ public class DefaultKeyGenerator implements KeyGenerator {
 	public KeyPair generateEcKeyPair() {
 		try {
 			KeyPairGenerator kpg = KeyPairGenerator.getInstance("EC");
-		    kpg.initialize(new ECGenParameterSpec("secp224r1"));
+		    kpg.initialize(new ECGenParameterSpec("secp384r1"));
 			return kpg.generateKeyPair();
 		} catch (Exception e) {
 			throw new RuntimeException(e); 
