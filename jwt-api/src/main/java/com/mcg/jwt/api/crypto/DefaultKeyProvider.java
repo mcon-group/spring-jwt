@@ -7,13 +7,15 @@ import java.util.Map;
 
 import com.mcg.jwt.api.PrivateKeyProvider;
 import com.mcg.jwt.api.PublicKeyProvider;
+import com.mcg.jwt.api.entities.BasicEncodedPrivateKey;
+import com.mcg.jwt.api.entities.BasicEncodedPublicKey;
 import com.mcg.jwt.api.entities.EncodedPrivateKey;
 import com.mcg.jwt.api.entities.EncodedPublicKey;
 
 public class DefaultKeyProvider implements PrivateKeyProvider, PublicKeyProvider {
 
 	private DefaultKeyGenerator kg = new DefaultKeyGenerator();
-	private Map<Long,EncodedPublicKey> publicKeys = new HashMap<>();
+	private Map<Long,BasicEncodedPublicKey> publicKeys = new HashMap<>();
 	private EncodedPrivateKey encodedPrivateKey;
 	private String algorithm;
 	
@@ -25,12 +27,12 @@ public class DefaultKeyProvider implements PrivateKeyProvider, PublicKeyProvider
 			
 			long serial = System.currentTimeMillis();
 			
-			EncodedPrivateKey eprivk = new EncodedPrivateKey();
+			BasicEncodedPrivateKey eprivk = new BasicEncodedPrivateKey();
 			eprivk.setAlgorithm(getAlgorithm());
 			eprivk.setSerial(serial);
 			eprivk.setPrivateKey(kp.getPrivate());
 			
-			EncodedPublicKey epubk = new EncodedPublicKey();
+			BasicEncodedPublicKey epubk = new BasicEncodedPublicKey();
 			epubk.setAlgorithm(getAlgorithm());
 			epubk.setSerial(serial);
 			epubk.setPublicKey(kp.getPublic());
