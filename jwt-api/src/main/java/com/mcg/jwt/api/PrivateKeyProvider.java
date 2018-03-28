@@ -1,14 +1,11 @@
 package com.mcg.jwt.api;
 
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
+
+import com.mcg.jwt.api.entities.EncodedPrivateKey;
 
 public interface PrivateKeyProvider {
 
-	public PrivateKey getPrivateKey(long serial) throws NoSuchAlgorithmException;
-	
-	public long getCurrentSerial();
-	
-	public String getAlgorithm();
+	public EncodedPrivateKey getPrivateKey() throws NoSuchAlgorithmException;
 
 }

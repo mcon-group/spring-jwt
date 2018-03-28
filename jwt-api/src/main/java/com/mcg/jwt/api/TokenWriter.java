@@ -1,11 +1,12 @@
 package com.mcg.jwt.api;
 
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
 import java.util.Date;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.mcg.jwt.api.entities.EncodedPrivateKey;
 
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -17,16 +18,15 @@ public abstract class TokenWriter<T> {
 	private PrivateKeyProvider privateKeyProvider;
 	
 	public String createToken(T in, Date expires) throws NoSuchAlgorithmException {
-		long serial = privateKeyProvider.getCurrentSerial();
-		PrivateKey key = privateKeyProvider.getPrivateKey(serial);
+		EncodedPrivateKey epk = privateKeyProvider.getPrivateKey();
 		JwtBuilder b = Jwts.builder();
-		b = b.setHeaderParam("serial", serial+"");
+		b = b.setHeaderParam("serial", epk.getSerial()+"");
 		b = b.setExpiration(expires);
 		b = b.addClaims(map(in));
-		if(privateKeyProvider.getAlgorithm().equals("RSA")) {
-			b = b.signWith(SignatureAlgorithm.RS256, key);
-		} else if(privateKeyProvider.getAlgorithm().equals("EC")) {
-			b = b.signWith(SignatureAlgorithm.ES256, key);
+		if(epk.getAlgorithm().equals("RSA")) {
+			b = b.signWith(SignatureAlgorithm.RS256, epk.getPrivateKey());
+		} else if(epk.getAlgorithm().equals("EC")) {
+			b = b.signWith(SignatureAlgorithm.ES256, epk.getPrivateKey());
 		} else {
 			throw new NoSuchAlgorithmException();
 		}

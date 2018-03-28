@@ -2,52 +2,55 @@ package com.mcg.jwt.api.crypto;
 
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.mcg.jwt.api.PrivateKeyProvider;
 import com.mcg.jwt.api.PublicKeyProvider;
+import com.mcg.jwt.api.entities.EncodedPrivateKey;
+import com.mcg.jwt.api.entities.EncodedPublicKey;
 
 public class DefaultKeyProvider implements PrivateKeyProvider, PublicKeyProvider {
 
 	private DefaultKeyGenerator kg = new DefaultKeyGenerator();
-	private Map<Long,KeyPair> keyPairs = new HashMap<Long, KeyPair>();
-	private long currentSerial = 0; 
+	private Map<Long,EncodedPublicKey> publicKeys = new HashMap<>();
+	private EncodedPrivateKey encodedPrivateKey;
 	private String algorithm;
 	
-	public void createKeyPair(long serial) throws NoSuchAlgorithmException {
-		if(serial < currentSerial) {
-			throw new RuntimeException("serials should not go down");
-		}
-		kg.setAlgorithm(algorithm);
+	public void generateKeyPair() throws NoSuchAlgorithmException {
+		kg.setAlgorithm(getAlgorithm());
 		try {
 			KeyPair kp = kg.generateKeyPair();
-			keyPairs.put(serial, kp);
-			this.currentSerial = serial;
+			
+			
+			long serial = System.currentTimeMillis();
+			
+			EncodedPrivateKey eprivk = new EncodedPrivateKey();
+			eprivk.setAlgorithm(getAlgorithm());
+			eprivk.setSerial(serial);
+			eprivk.setPrivateKey(kp.getPrivate());
+			
+			EncodedPublicKey epubk = new EncodedPublicKey();
+			epubk.setAlgorithm(getAlgorithm());
+			epubk.setSerial(serial);
+			epubk.setPublicKey(kp.getPublic());
+			
+			publicKeys.put(serial, epubk);
+			this.encodedPrivateKey = eprivk;
+
 		} catch (NoSuchAlgorithmException e) {
 			throw new NoSuchAlgorithmException();
 		}
 	}
-	
-	
-	private KeyPair getKeyPair(long serial) throws NoSuchAlgorithmException {
-		return keyPairs.get(serial);
-	}
-	
-	public List<PublicKey> getKeys() throws NoSuchAlgorithmException {
-		List<PublicKey> out = new ArrayList<PublicKey>();
-		for(KeyPair kp : keyPairs.values()) {
-			out.add(kp.getPublic());
-		}
-		return out;
+
+	@Override
+	public EncodedPublicKey getPublicKey(long serial) throws NoSuchAlgorithmException {
+		return publicKeys.get(serial);
 	}
 
-	public PrivateKey getPrivateKey(long serial) throws NoSuchAlgorithmException {
-		return getKeyPair(serial).getPrivate();
+	@Override
+	public EncodedPrivateKey getPrivateKey() throws NoSuchAlgorithmException {
+		return encodedPrivateKey;
 	}
 
 	public String getAlgorithm() {
@@ -56,14 +59,6 @@ public class DefaultKeyProvider implements PrivateKeyProvider, PublicKeyProvider
 
 	public void setAlgorithm(String algorithm) {
 		this.algorithm = algorithm;
-	}
-
-	public PublicKey getKey(long serial) throws NoSuchAlgorithmException {
-		return getKeyPair(serial).getPublic();
-	}
-
-	public long getCurrentSerial() {
-		return currentSerial;
 	}
 	
 	

@@ -5,10 +5,15 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.mcg.jwt.api.entities.EncodedPublicKey;
 import com.mcg.jwt.api.exception.TokenException;
 import com.mcg.jwt.api.exception.TokenExpiredException;
 import com.mcg.jwt.api.exception.TokenUnreadableException;
@@ -22,6 +27,8 @@ import io.jsonwebtoken.SigningKeyResolver;
 @EnableScheduling
 public abstract class TokenReader<T> {
 
+	private static Log log = LogFactory.getLog(TokenReader.class);
+	
 	@Autowired
 	private PublicKeyProvider publicKeyProvider;
 	
@@ -40,7 +47,18 @@ public abstract class TokenReader<T> {
 	public T readToken(String in) throws TokenException, NoSuchAlgorithmException {
 		if(in == null || in.trim().length()==0) return null;
 		try {
-			return unmap(Jwts.parser().setSigningKeyResolver(resolver).parseClaimsJws(in).getBody()); 
+			log.debug("reading token: "+in);
+			Map<String,Object> m = Jwts.parser().setSigningKeyResolver(resolver).parseClaimsJws(in).getBody();
+			log.debug("mapping ... ");
+			T t = unmap(m);
+			if(log.isDebugEnabled()) {
+				try {
+					String s = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT).writeValueAsString(t);
+					log.debug("mapped object: "+s);
+				} catch (Exception e) {
+				}
+			}
+			return t;
 		} catch (ExpiredJwtException e1) {
 			throw new TokenExpiredException();
 		} catch (Exception e) {
@@ -74,15 +92,21 @@ public abstract class TokenReader<T> {
 
 		public Key resolveSigningKey(JwsHeader header, String plaintext) {
 			try {
+				log.debug("resolving signing key: "+header.get("serial"));
 				Long s = Long.parseLong(header.get("serial")+"");
+				if(s == null) return null;
 				Key k = keys.get(s);
 				if(k==null) {
-					k = publicKeyProvider.getKey(s);
+					EncodedPublicKey epubKey = publicKeyProvider.getPublicKey(s);
+					if(epubKey == null) return null; 
+					k = epubKey.getPublicKey();
 					keys.put(s.toString(), k);
+				} else {
+					log.warn("resolving signing key: "+header.get("serial")+" not found!");
 				}
 				return k;
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.warn("error resolving signing key",e);
 				throw new RuntimeException("could not find key to verify signature!");
 			}
 		}

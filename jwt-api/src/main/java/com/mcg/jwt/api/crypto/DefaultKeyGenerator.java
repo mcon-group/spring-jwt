@@ -13,8 +13,8 @@ import com.mcg.jwt.api.KeyGenerator;
 @Service
 public class DefaultKeyGenerator implements KeyGenerator {
 
-	@Value("${jwt.algo:'RSA'}")
-	private String algorithm = "RSA";
+	@Value("${jwt.algo:'EC'}")
+	private String algorithm = "EC";
 	
 	public DefaultKeyGenerator() {
 	}

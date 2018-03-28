@@ -21,8 +21,8 @@ public class EncodeDecodeTest {
 	public void testEncodeDecodeRSA() throws NoSuchAlgorithmException, TokenException {
 		DefaultKeyProvider dkp = new DefaultKeyProvider();
 		dkp.setAlgorithm("RSA");
-		dkp.createKeyPair(1);
-		dkp.getPrivateKey(1);
+		dkp.generateKeyPair();
+		dkp.getPrivateKey();
 		UserTokenWriter utw = new UserTokenWriter();
 		utw.setPrivateKeyProvider(dkp);
 		UserTokenReader utr = new UserTokenReader();
@@ -53,7 +53,7 @@ public class EncodeDecodeTest {
 	public void testEncodeDecodeExpired() throws NoSuchAlgorithmException, InterruptedException, TokenException {
 		DefaultKeyProvider dkp = new DefaultKeyProvider();
 		dkp.setAlgorithm("RSA");
-		dkp.createKeyPair(1);
+		dkp.generateKeyPair();
 		UserTokenWriter utw = new UserTokenWriter();
 		utw.setPrivateKeyProvider(dkp);
 		UserTokenReader utr = new UserTokenReader();
@@ -78,8 +78,8 @@ public class EncodeDecodeTest {
 	public void testEncodeDecodeEC() throws NoSuchAlgorithmException, TokenException {
 		DefaultKeyProvider dkp = new DefaultKeyProvider();
 		dkp.setAlgorithm("EC");
-		dkp.createKeyPair(1);
-		dkp.getPrivateKey(1);
+		dkp.generateKeyPair();
+		dkp.getPrivateKey();
 		UserTokenWriter utw = new UserTokenWriter();
 		utw.setPrivateKeyProvider(dkp);
 		UserTokenReader utr = new UserTokenReader();
@@ -106,7 +106,7 @@ public class EncodeDecodeTest {
 	public void testEncodeDecodeRandom() throws NoSuchAlgorithmException, TokenException {
 		DefaultKeyProvider dkp = new DefaultKeyProvider();
 		dkp.setAlgorithm("HUND");
-		dkp.createKeyPair(1);
+		dkp.generateKeyPair();
 	}
 	
 
