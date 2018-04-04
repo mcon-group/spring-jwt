@@ -4,10 +4,7 @@
 	<groupId>com.mcg.jwt</groupId>
 	<artifactId>jwt</artifactId>
 	<version>0.0.16-SNAPSHOT</version>
-	<packaging>pom</packaging>
-	<modules>
-		<module>jwt-api</module>
-	</modules>
+	<packaging>jar</packaging>
 	<properties>
 		<maven.compiler.debug>true</maven.compiler.debug>
 		<maven.compiler.source>1.8</maven.compiler.source>
