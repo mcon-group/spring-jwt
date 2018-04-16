@@ -16,6 +16,7 @@ public class BasicEncodedPublicKey implements EncodedPublicKey {
 
 	private String algorithm;
 	
+	private Date issued;
 	private Date notAfter;
 	
 	@Override
@@ -23,6 +24,7 @@ public class BasicEncodedPublicKey implements EncodedPublicKey {
 		return serial;
 	}
 
+	@Override
 	public void setSerial(long serial) {
 		this.serial = serial;
 	}
@@ -32,6 +34,7 @@ public class BasicEncodedPublicKey implements EncodedPublicKey {
 		return algorithm;
 	}
 	
+	@Override
 	public void setAlgorithm(String algorithm) {
 		this.algorithm = algorithm;
 	}
@@ -44,6 +47,7 @@ public class BasicEncodedPublicKey implements EncodedPublicKey {
 		this.key = key;
 	}
 	
+	@Override
 	@JsonIgnore
 	public void setPublicKey(PublicKey publicKey) {
 		this.algorithm = publicKey.getAlgorithm();
@@ -62,12 +66,24 @@ public class BasicEncodedPublicKey implements EncodedPublicKey {
 		}
 	}
 
+	@Override
 	public Date getNotAfter() {
 		return notAfter;
 	}
 
+	@Override
 	public void setNotAfter(Date notAfter) {
 		this.notAfter = notAfter;
+	}
+
+	@Override
+	public Date getIssued() {
+		return issued;
+	}
+
+	@Override
+	public void setIssued(Date issued) {
+		this.issued = issued;
 	}
 	
 	
