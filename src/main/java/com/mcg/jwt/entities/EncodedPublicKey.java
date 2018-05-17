@@ -25,5 +25,9 @@ public interface EncodedPublicKey {
 
 	void setSerial(long serial);
 
+	void setKey(String key);
+
+	String getKey();
+
 
 }
