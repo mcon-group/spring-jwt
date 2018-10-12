@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.mcg.jwt</groupId>
 	<artifactId>jwt</artifactId>
-	<version>0.0.19-SNAPSHOT</version>
+	<version>0.1.19-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<properties>
 		<maven.compiler.debug>true</maven.compiler.debug>
@@ -28,6 +28,12 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
 			<version>5.0.3.RELEASE</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot</artifactId>
+			<version>2.0.4.RELEASE</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

@@ -11,23 +11,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.mcg.jwt.entities.EncodedPublicKey;
 import com.mcg.jwt.exception.TokenException;
 import com.mcg.jwt.exception.TokenExpiredException;
 import com.mcg.jwt.exception.TokenUnreadableException;
+import com.mcg.jwt.exception.config.JwtConfig;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.CompressionCodec;
+import io.jsonwebtoken.CompressionCodecResolver;
+import io.jsonwebtoken.CompressionException;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Header;
 import io.jsonwebtoken.JwsHeader;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SigningKeyResolver;
+import io.jsonwebtoken.impl.compression.GzipCompressionCodec;
 
 @EnableScheduling
 public abstract class TokenReader<T> {
 
 	private static Log log = LogFactory.getLog(TokenReader.class);
+	
+	@Autowired
+	private JwtConfig config;
 	
 	@Autowired
 	private PublicKeyProvider publicKeyProvider;
@@ -48,6 +59,9 @@ public abstract class TokenReader<T> {
 		if(in == null || in.trim().length()==0) return null;
 		try {
 			log.debug("reading token: "+in);
+			JwtParser p = Jwts.parser();
+			p = p.setSigningKeyResolver(resolver);
+			
 			Map<String,Object> m = Jwts.parser().setSigningKeyResolver(resolver).parseClaimsJws(in).getBody();
 			log.debug("mapping ... ");
 			T t = unmap(m);

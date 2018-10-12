@@ -1,33 +1,92 @@
 package com.mcg.jwt.entities;
 
+import java.security.KeyFactory;
 import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 import java.util.Date;
 
-public interface EncodedPublicKey {
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-	PublicKey getPublicKey();
+public class EncodedPublicKey {
+	
+	private long serial;
+	
+	private String key;
 
-	void setPublicKey(PublicKey publicKey);
+	private String algorithm;
+	
+	private Date issued;
+	private Date notAfter;
+	
+	
+	public long getSerial() {
+		return serial;
+	}
 
-	String getAlgorithm();
+	
+	public void setSerial(long serial) {
+		this.serial = serial;
+	}
 
-	long getSerial();
+	
+	public String getAlgorithm() {
+		return algorithm;
+	}
+	
+	
+	public void setAlgorithm(String algorithm) {
+		this.algorithm = algorithm;
+	}
+	
+	
+	public String getKey() {
+		return key;
+	}
 
-	void setIssued(Date issued);
+	
+	public void setKey(String key) {
+		this.key = key;
+	}
+	
+	
+	@JsonIgnore
+	public void setPublicKey(PublicKey publicKey) {
+		this.algorithm = publicKey.getAlgorithm();
+		this.key = Base64.getEncoder().encodeToString(publicKey.getEncoded());
+	}
+	
+	
+	@JsonIgnore
+	public PublicKey getPublicKey() {
+		try {
+			X509EncodedKeySpec spec = new X509EncodedKeySpec(Base64.getDecoder().decode(key));
+			KeyFactory kf = KeyFactory.getInstance(algorithm);		
+			return kf.generatePublic(spec); 
+		} catch (Exception e) {
+			throw new RuntimeException("unreadable public key");
+		}
+	}
 
-	Date getIssued();
+	
+	public Date getNotAfter() {
+		return notAfter;
+	}
 
-	void setNotAfter(Date notAfter);
+	
+	public void setNotAfter(Date notAfter) {
+		this.notAfter = notAfter;
+	}
 
-	Date getNotAfter();
+	
+	public Date getIssued() {
+		return issued;
+	}
 
-	void setAlgorithm(String algorithm);
-
-	void setSerial(long serial);
-
-	void setKey(String key);
-
-	String getKey();
-
-
+	
+	public void setIssued(Date issued) {
+		this.issued = issued;
+	}
+	
+	
 }
