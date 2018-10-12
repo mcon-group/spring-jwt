@@ -7,17 +7,12 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.mcg.jwt.entities.EncodedPrivateKey;
-import com.mcg.jwt.exception.config.JwtConfig;
 
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.compression.GzipCompressionCodec;
 
 public abstract class TokenWriter<T> {
-	
-	@Autowired
-	private JwtConfig config;
 	
 	@Autowired
 	private PrivateKeyProvider privateKeyProvider;
@@ -28,9 +23,6 @@ public abstract class TokenWriter<T> {
 		b = b.setHeaderParam("serial", epk.getSerial()+"");
 		b = b.setExpiration(expires);
 		b = b.addClaims(map(in));
-		if(config !=null && config.isGzip()) {
-			b = b.compressWith(new GzipCompressionCodec());
-		}
 		if(epk.getAlgorithm().equals("RSA")) {
 			b = b.signWith(SignatureAlgorithm.RS256, epk.getPrivateKey());
 		} else if(epk.getAlgorithm().equals("EC")) {
