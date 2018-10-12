@@ -38,7 +38,7 @@ public class EncodeDecodeTest {
 		
 		u.setAuthorities(x);
 		
-		String s = utw.createToken(u, new Date(System.currentTimeMillis()+1000));
+		String s = utw.createToken(u, new Date(System.currentTimeMillis()+5000));
 		System.err.println(s);
 		User u2 = utr.readToken(s);
 		System.err.println(u2);

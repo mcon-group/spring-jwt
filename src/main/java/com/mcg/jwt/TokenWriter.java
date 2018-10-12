@@ -28,7 +28,7 @@ public abstract class TokenWriter<T> {
 		b = b.setHeaderParam("serial", epk.getSerial()+"");
 		b = b.setExpiration(expires);
 		b = b.addClaims(map(in));
-		if(config.isGzip()) {
+		if(config !=null && config.isGzip()) {
 			b = b.compressWith(new GzipCompressionCodec());
 		}
 		if(epk.getAlgorithm().equals("RSA")) {
