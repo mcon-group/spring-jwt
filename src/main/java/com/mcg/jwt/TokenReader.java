@@ -49,11 +49,15 @@ public abstract class TokenReader<T> {
 		if(in == null || in.trim().length()==0) return null;
 		try {
 			log.debug("reading token: "+in);
+
+			log.debug("creating parser with public key provider: "+publicKeyProvider.getClass());
 			JwtParser p = Jwts.parser();
 			p = p.setSigningKeyResolver(resolver);
 			
+			log.debug("parsing body ... ");
 			Map<String,Object> m = Jwts.parser().setSigningKeyResolver(resolver).parseClaimsJws(in).getBody();
-			log.debug("mapping ... ");
+			log.debug("mapping body ... ");
+
 			T t = unmap(m);
 			if(log.isDebugEnabled()) {
 				try {
@@ -90,23 +94,23 @@ public abstract class TokenReader<T> {
 	
 	private class Resolver implements SigningKeyResolver {
 		
-		private Map<String,Key> keys = new HashMap<String, Key>();
+		private Map<Long,Key> keys = new HashMap<Long, Key>();
 
-		public Key resolveSigningKey(JwsHeader header, Claims claims) {
+		public Key resolveSigningKey(@SuppressWarnings("rawtypes") JwsHeader header, Claims claims) {
 			return (resolveSigningKey(header, ""));
 		}
 
-		public Key resolveSigningKey(JwsHeader header, String plaintext) {
+		public Key resolveSigningKey(@SuppressWarnings("rawtypes") JwsHeader header, String plaintext) {
 			try {
 				log.debug("resolving signing key: "+header.get("serial"));
+				if(header.get("serial")==null) return null;
 				Long s = Long.parseLong(header.get("serial")+"");
-				if(s == null) return null;
 				Key k = keys.get(s);
 				if(k==null) {
 					EncodedPublicKey epubKey = publicKeyProvider.getPublicKey(s);
 					if(epubKey == null) return null; 
 					k = epubKey.getPublicKey();
-					keys.put(s.toString(), k);
+					keys.put(s, k);
 				} else {
 					log.warn("resolving signing key: "+header.get("serial")+" not found!");
 				}
