@@ -68,10 +68,10 @@ public abstract class TokenReader<T> {
 			}
 			return t;
 		} catch (ExpiredJwtException e1) {
-			log.error("JWT expired: ",e1);
+			log.error("JWT expired ("+e1.getMessage()+")");
 			throw new TokenExpiredException();
 		} catch (Exception e2) {
-			log.error("JWT invalid: ",e2);
+			log.error("JWT invalid: ("+e2.getMessage()+")");
 			throw new TokenUnreadableException();
 		} 
 	}
