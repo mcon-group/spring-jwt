@@ -107,12 +107,16 @@ public abstract class TokenReader<T> {
 				Long s = Long.parseLong(header.get("serial")+"");
 				Key k = keys.get(s);
 				if(k==null) {
+					log.info("resolving signing key: "+header.get("serial")+" NOT found in cache!");
 					EncodedPublicKey epubKey = publicKeyProvider.getPublicKey(s);
 					if(epubKey == null) return null; 
 					k = epubKey.getPublicKey();
 					keys.put(s, k);
 				} else {
-					log.warn("resolving signing key: "+header.get("serial")+" not found!");
+					log.info("resolving signing key: "+header.get("serial")+" found in cache!");
+				}
+				if(k==null) {
+					throw new Exception("error resolving signing key");
 				}
 				return k;
 			} catch (Exception e) {
