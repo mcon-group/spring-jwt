@@ -2,6 +2,7 @@ package com.mcg.jwt;
 
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -109,7 +110,12 @@ public abstract class TokenReader<T> {
 				if(k==null) {
 					log.info("resolving signing key: "+header.get("serial")+" NOT found in cache!");
 					EncodedPublicKey epubKey = publicKeyProvider.getPublicKey(s);
-					if(epubKey == null) return null; 
+					if(epubKey == null) {
+						throw new RuntimeException("could not find key for serial: "+s);
+					} 
+					if(epubKey.getNotAfter().after(new Date())) {
+						throw new RuntimeException("key found for serial: "+s+" is no longer valid (expired: "+epubKey.getNotAfter()+")");
+					}
 					k = epubKey.getPublicKey();
 					keys.put(s, k);
 				} else {
