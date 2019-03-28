@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.mcg.jwt</groupId>
 	<artifactId>jwt</artifactId>
-	<version>0.1.25</version>
+	<version>0.1.26-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<properties>
 		<maven.compiler.debug>true</maven.compiler.debug>
