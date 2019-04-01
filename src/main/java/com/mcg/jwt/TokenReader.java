@@ -114,7 +114,7 @@ public abstract class TokenReader<T> {
 						throw new RuntimeException("could not find key for serial: "+s);
 					} else if (epubKey.getNotAfter()==null) {
 						//no
-					} else if (epubKey.getNotAfter().after(new Date())) {
+					} else if (epubKey.getNotAfter().before(new Date())) {
 						throw new RuntimeException("key found for serial: "+s+" is no longer valid (expired: "+epubKey.getNotAfter()+")");
 					}
 					k = epubKey.getPublicKey();
