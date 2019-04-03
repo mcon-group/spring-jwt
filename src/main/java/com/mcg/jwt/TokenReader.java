@@ -65,6 +65,8 @@ public abstract class TokenReader<T> {
 					String s = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT).writeValueAsString(t);
 					log.debug("mapped object: "+s);
 				} catch (Exception e) {
+					log.error("unable to map object: ",e);
+					throw new TokenUnreadableException();
 				}
 			}
 			return t;
@@ -72,7 +74,7 @@ public abstract class TokenReader<T> {
 			log.error("JWT expired ("+e1.getMessage()+")",e1);
 			throw new TokenExpiredException();
 		} catch (Exception e2) {
-			log.error("JWT invalid: ("+e2.getMessage()+")",e2);
+			log.error("JWT invalid: ("+e2.getClass().getSimpleName()+":"+e2.getMessage()+")",e2);
 			throw new TokenUnreadableException();
 		} 
 	}
