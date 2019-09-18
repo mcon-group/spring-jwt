@@ -9,8 +9,6 @@ import com.mcg.jwt.PrivateKeyProvider;
 import com.mcg.jwt.PublicKeyProvider;
 import com.mcg.jwt.entities.EncodedPrivateKey;
 import com.mcg.jwt.entities.EncodedPublicKey;
-import com.mcg.jwt.entities.EncodedPrivateKey;
-import com.mcg.jwt.entities.EncodedPublicKey;
 
 public class DefaultKeyProvider implements PrivateKeyProvider, PublicKeyProvider {
 
