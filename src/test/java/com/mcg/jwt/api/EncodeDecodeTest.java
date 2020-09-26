@@ -106,8 +106,9 @@ public class EncodeDecodeTest {
 	
 	@Test
 	public void repeatEncodeDecodeTest() throws NoSuchAlgorithmException, TokenException {
-		for(int i=0;i < 1000;i++) {
+		for(int i=0;i < 100;i++) {
 			try {
+				System.err.println("repeating en- and decode: "+i);
 				testEncodeDecodeEC();
 				testEncodeDecodeRSA();
 			} catch (Exception e) {
