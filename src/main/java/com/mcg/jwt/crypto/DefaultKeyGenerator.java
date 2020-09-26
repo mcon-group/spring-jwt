@@ -3,6 +3,7 @@ package com.mcg.jwt.crypto;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.spec.ECGenParameterSpec;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +16,9 @@ public class DefaultKeyGenerator implements KeyGenerator {
 
 	@Value("${jwt.algo:'EC'}")
 	private String algorithm = "EC";
+	
+	@Value("${jwt.ec.curve:'secp384r1'}")
+	private String ecCurve = "secp384r1";
 	
 	public DefaultKeyGenerator() {
 	}
@@ -32,7 +36,7 @@ public class DefaultKeyGenerator implements KeyGenerator {
 	public KeyPair generateRsaKeyPair() {
 		try {
 			KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
-			kpg.initialize(4096);
+			kpg.initialize(4096,new SecureRandom());
 			return kpg.generateKeyPair();
 		} catch (Exception e) {
 			throw new RuntimeException(e); 
@@ -42,7 +46,7 @@ public class DefaultKeyGenerator implements KeyGenerator {
 	public KeyPair generateEcKeyPair() {
 		try {
 			KeyPairGenerator kpg = KeyPairGenerator.getInstance("EC");
-		    kpg.initialize(new ECGenParameterSpec("secp384r1"));
+		    kpg.initialize(new ECGenParameterSpec(ecCurve),new SecureRandom());
 			return kpg.generateKeyPair();
 		} catch (Exception e) {
 			throw new RuntimeException(e); 
