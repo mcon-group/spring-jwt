@@ -58,7 +58,7 @@ public class EncodedPrivateKey {
 			KeyFactory kf = KeyFactory.getInstance(algorithm);		
 			return kf.generatePrivate(spec); 
 		} catch (Exception e) {
-			throw new RuntimeException("unreadable public key");
+			throw new RuntimeException("unreadable private key",e);
 		}
 	}
 
