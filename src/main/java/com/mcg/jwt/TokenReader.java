@@ -71,10 +71,10 @@ public abstract class TokenReader<T> {
 			}
 			return t;
 		} catch (ExpiredJwtException e1) {
-			log.error("JWT expired ("+e1.getMessage()+")",e1);
+			log.debug("JWT expired ("+e1.getMessage()+")",e1);
 			throw new TokenExpiredException();
 		} catch (Exception e2) {
-			log.error("JWT invalid: ("+e2.getClass().getSimpleName()+":"+e2.getMessage()+")",e2);
+			log.debug("JWT invalid: ("+e2.getClass().getSimpleName()+":"+e2.getMessage()+")",e2);
 			throw new TokenUnreadableException();
 		} 
 	}
@@ -129,7 +129,7 @@ public abstract class TokenReader<T> {
 				}
 				return k;
 			} catch (Exception e) {
-				log.warn("error resolving signing key",e);
+				log.debug("error resolving signing key",e);
 				throw new RuntimeException("could not find key to verify signature!");
 			}
 		}
